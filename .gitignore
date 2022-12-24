@@ -1,5 +1,7 @@
 # Ignore build directory
 build/
+vs_build/x64/
+vs_build/.vs/
 
 # Prerequisites
 *.d

@@ -1,0 +1,8 @@
++ MAYAVERSION:2019 AdvancedMayaPlayblast ${PROJECT_VERSION} ./AdvancedMayaPlayblast
+plug-ins: plug-ins/2019
+
++ MAYAVERSION:2020 AdvancedMayaPlayblast ${PROJECT_VERSION} ./AdvancedMayaPlayblast
+plug-ins: plug-ins/2020
+
++ MAYAVERSION:2022 AdvancedMayaPlayblast ${PROJECT_VERSION} ./AdvancedMayaPlayblast
+plug-ins: plug-ins/2022
