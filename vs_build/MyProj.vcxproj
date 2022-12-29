@@ -123,7 +123,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>UNICODE;WIN32;_DEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Custom\Libraries\Maya\2022\include;C:\Custom\Libraries\Maya\2022\include\Qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Custom\Libraries\Maya\2022\include;C:\Custom\Libraries\Maya\2022\include\Qt;C:\Custom\Libraries\ffmpeg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>
       </AdditionalOptions>
@@ -131,8 +131,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Custom\Libraries\Maya\2022\lib;C:\Custom\Programs\Qt\5.15.2\msvc2019_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Foundation.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Qt5OpenGL.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Custom\Libraries\Maya\2022\lib;C:\Custom\Programs\Qt\5.15.2\msvc2019_64\lib;C:\Custom\Libraries\ffmpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Foundation.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Qt5OpenGL.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/export:initializePlugin /export:uninitializePlugin %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ProjectReference>
@@ -154,7 +154,7 @@ python $(ProjectDir)load_plugin.py</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>UNICODE;WIN32;NDEBUG;QT_CORE_LIB;QT_NO_DEBUG;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Custom\Libraries\Maya\2022\include;C:\Custom\Libraries\Maya\2022\include\Qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Custom\Libraries\Maya\2022\include;C:\Custom\Libraries\Maya\2022\include\Qt;C:\Custom\Libraries\ffmpeg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>
       </AdditionalOptions>
@@ -164,8 +164,8 @@ python $(ProjectDir)load_plugin.py</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Custom\Libraries\Maya\2022\lib;C:\Custom\Programs\Qt\5.15.2\msvc2019_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Foundation.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Qt5OpenGL.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Custom\Libraries\Maya\2022\lib;C:\Custom\Programs\Qt\5.15.2\msvc2019_64\lib;C:\Custom\Libraries\ffmpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Foundation.lib;OpenMaya.lib;OpenMayaAnim.lib;OpenMayaFX.lib;OpenMayaRender.lib;OpenMayaUI.lib;Qt5OpenGL.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/export:initializePlugin /export:uninitializePlugin %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ProjectReference>
@@ -181,11 +181,15 @@ python $(ProjectDir)load_plugin.py</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\advancedMayaPlayblast.cpp" />
+    <ClCompile Include="..\src\ffConvert.cpp" />
+    <ClCompile Include="..\src\hwApiTextureTestStrings.cpp" />
     <ClCompile Include="..\src\pluginMain.cpp" />
     <ClCompile Include="..\src\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\advancedMayaPlayblast.h" />
+    <ClInclude Include="..\src\ffConvert.h" />
+    <ClInclude Include="..\src\hwApiTextureTestStrings.h" />
     <ClInclude Include="..\src\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

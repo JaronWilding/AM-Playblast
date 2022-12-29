@@ -22,12 +22,9 @@ def maya_useNewAPI():
     pass
 
 
-C:\Custom\Libraries\Maya\2022\include;C:\Custom\Libraries\Maya\2022\include\Qt;C:\Custom\Libraries\Maya\2022\include\Qt\QtGui;C:\Custom\Libraries\Maya\2022\include\Qt\QtCore;C:\Custom\Libraries\Maya\2022\include\Qt\QtANGLE;C:\Custom\Libraries\Maya\2022\include\Qt\QtOpenGL;C:\Custom\Libraries\Maya\2022\include\Qt\QtWidgets;%(AdditionalIncludeDirectories)
-
-
 class PixelPlayblastCmd(om2.MPxCommand):
     
-    COMMAND_NAME = "pzCaptureViewRender"
+    COMMAND_NAME = "CaptureViewRender"
     
     def __init__(self):
         super(PixelPlayblastCmd, self).__init__()
@@ -37,6 +34,7 @@ class PixelPlayblastCmd(om2.MPxCommand):
         self._window = shiboken2.wrapInstance(self._viewer.widget(), QWidget)
         self._window_width = self._window.size().width()
         self._window_height = self._window.size().height()
+
         self._window.resize(1920, 1080)
         self._window.repaint(0, 0, 1920, 1080)
         

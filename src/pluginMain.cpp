@@ -1,17 +1,25 @@
+// -----------------------------------------
+//
+// pluginMain.cpp
+// AdvancedMayaPlayblaster
+//
+// Created by Jaron Wilding on 20/12/2022
+//
+// -----------------------------------------
+
 #include <maya/MFnPlugin.h>
 #include <maya/MGlobal.h>
+
+
 
 #include "advancedMayaPlayblast.h"
 
 MStatus initializePlugin(MObject pluginObj) {
-    const char* vendor = "Jaron Wilding";
-    const char* version = "1.0.0";
-    const char* requiredApiVersion = "Any";
 
     MStatus status;
-    MFnPlugin pluginFn(pluginObj, vendor, version, requiredApiVersion, &status);
+    MFnPlugin pluginFn(pluginObj, "Jaron Wilding", kVersion, "Any", &status);
 
-    status = pluginFn.registerCommand(AMPlayblastCmd::CommandName(), AMPlayblastCmd::Creator, AMPlayblastCmd::CreateSyntax);
+    status = pluginFn.registerCommand(advancedPlayblastCmd::kName, advancedPlayblastCmd::creator, advancedPlayblastCmd::createSyntax);
     CHECK_MSTATUS_AND_RETURN_IT(status);
 
     return MS::kSuccess;
@@ -23,7 +31,7 @@ MStatus uninitializePlugin(MObject pluginObj) {
 
     MFnPlugin fnPlugin(pluginObj);
 
-    status = fnPlugin.deregisterCommand(AMPlayblastCmd::CommandName());
+    status = fnPlugin.deregisterCommand(advancedPlayblastCmd::kName);
     CHECK_MSTATUS_AND_RETURN_IT(status);
 
     return MS::kSuccess;
