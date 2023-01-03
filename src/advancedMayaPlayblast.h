@@ -27,7 +27,11 @@
 // Consts definition
 //----------------------------------------------------
 
-static const char* kVersion = "1.0.0";
+#ifndef _DEBUG
+	static const char* kVersion = "1.0.0";
+#else
+	static const char* kVersion = "1.0.0 DEBUG";
+#endif
 
 
 // -----------------------------------------
@@ -75,8 +79,5 @@ private:
 	Vector2 vFrameRange;
 	MString outputDir;
 	MString outputType;
-
-protected:
-	MHWRender::MRenderer* fRenderer;
 };
 

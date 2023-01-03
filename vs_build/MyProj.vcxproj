@@ -182,6 +182,7 @@ python $(ProjectDir)load_plugin.py</Command>
   <ItemGroup>
     <ClCompile Include="..\src\advancedMayaPlayblast.cpp" />
     <ClCompile Include="..\src\ffConvert.cpp" />
+    <ClCompile Include="..\src\getMayaRenderData.cpp" />
     <ClCompile Include="..\src\hwApiTextureTestStrings.cpp" />
     <ClCompile Include="..\src\pluginMain.cpp" />
     <ClCompile Include="..\src\Vector2.cpp" />
@@ -189,6 +190,7 @@ python $(ProjectDir)load_plugin.py</Command>
   <ItemGroup>
     <ClInclude Include="..\src\advancedMayaPlayblast.h" />
     <ClInclude Include="..\src\ffConvert.h" />
+    <ClInclude Include="..\src\getMayaRenderData.h" />
     <ClInclude Include="..\src\hwApiTextureTestStrings.h" />
     <ClInclude Include="..\src\Vector2.h" />
   </ItemGroup>

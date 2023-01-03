@@ -19,9 +19,12 @@
 #include <maya/MGlobal.h>
 #include <maya/MImage.h>
 #include <maya/MSyntax.h>
+#include <maya/MRenderUtilities.h>
+#include <maya/MDrawContext.h>
 
 
 #include "hwApiTextureTestStrings.h"
+#include "getMayaRenderData.h"
 
 
 
@@ -35,7 +38,9 @@
 // -----------------------------------------
 
 advancedPlayblastCmd::advancedPlayblastCmd() : MPxCommand(), mUndoable(false), mResolution(false), mFrameRange(false), mHelp(false) {
-    fRenderer = MHWRender::MRenderer::theRenderer();
+    MHWRender::MRenderer* theRenderer = MHWRender::MRenderer::theRenderer();
+    const MHWRender::MRenderTargetManager* targetManager = theRenderer->getRenderTargetManager();
+    mTarget = targetManager->acquireRenderTargetFromScreen(MString("CapturedTarget") + mRenderTime.value());
 };
 
 advancedPlayblastCmd::~advancedPlayblastCmd() {};
@@ -67,6 +72,9 @@ bool advancedPlayblastCmd::isUndoable() const
 #define kResolutionLong     "-resolution"
 
 const MString advancedPlayblastCmd::kName("AMPlayblast");
+std::vector<MayaViewportRenderData*> gRenderData;
+std::vector<MTexture*> textures;
+std::vector<std::vector<unsigned char>> dataImages;
 
 
 MSyntax advancedPlayblastCmd::createSyntax() {
@@ -155,18 +163,99 @@ MStatus advancedPlayblastCmd::redoIt() {
 
 
 void advancedPlayblastCmd::test() {
-
+    M3dView viewer = M3dView::active3dView();
     MHWRender::MRenderer* theRenderer = MHWRender::MRenderer::theRenderer();
-    if (theRenderer) {
-        const MHWRender::MRenderTargetManager* targetManager = theRenderer->getRenderTargetManager();
-        if (!targetManager)
-            MGlobal::displayInfo("Couldn't get target manager");
+    const MHWRender::MRenderTargetManager* targetManager = theRenderer->getRenderTargetManager();
+    MHWRender::MTextureManager* textureManager = theRenderer->getTextureManager();
 
-        mTarget = targetManager->acquireRenderTargetFromScreen(MString("CapturedTarget") + mRenderTime.value());
+    vFrameRange = mFrameRange ? vFrameRange : Vector2(MAnimControl::minTime(), MAnimControl::maxTime());
+
+    for (MTime startFrame = vFrameRange.mX; startFrame <= vFrameRange.mY; startFrame++) {
+
+        // Set the specific time
+        MAnimControl::setCurrentTime(startFrame);
+        viewer.refresh();
+
+        // Create our render target
+        MHWRender::MRenderTarget* viewportTarget = targetManager->acquireRenderTargetFromScreen("viewport");
+        
+        
+        // Create a render target descriptor
+        //MHWRender::MRenderTargetDescription targetDesc;
+        //viewportTarget->targetDescription(targetDesc);
+
+        MDrawContext* context = MHWRender::MRenderUtilities::acquireSwatchDrawContext(viewportTarget);
+        MTextureManager *textureManager = theRenderer->getTextureManager();
+        MTexture* colourTexture = context->copyCurrentColorRenderTargetToTexture();
+        colourTexture->setHasTransparentAlpha(false);
+        MTextureDescription colourDescription;
+        colourTexture->textureDescription(colourDescription);
+        int rowPitch = 0;
+        size_t slicePitch = 0;
+
+        // fHeight      = 732
+        // fWidth       = 529
+        // rowPitch     = 8464
+        // slicePitch   = 6195648
+
+
+
+        unsigned char* pixelData = (unsigned char*)(colourTexture->rawData(rowPitch, slicePitch));
+        /*
+        unsigned char* pixelVal = NULL;
+        for (unsigned int ii = 0; ii < colourDescription.fHeight; ii++) {
+            pixelVal = (pixelData + (ii * rowPitch)); // pixelVal is given location of pixelData.
+            for (unsigned jj = 0; jj < colourDescription.fWidth; jj++) {
+                unsigned char val = *pixelVal;
+                pixelVal++;
+            }
+        }
+        */
+        colourTexture->freeRawData(pixelData);
+        targetManager->releaseRenderTarget(viewportTarget);
+
+        boost::format res_fmt = boost::format("C:/Users/Jaron/Desktop/test/Image_%04d.png");
+
+
+        textureManager->saveTexture(colourTexture, MString(boost::str(res_fmt % startFrame.value()).c_str()));
+
+        //break;
+
+            
+
+        /*
+
+        // Render our viewport to the target.
+        theRenderer->render("viewport", &viewportTarget, 1);
+
+        int rowPitch = 0;
+        size_t slicePitch = 0;
+        unsigned char* pixelData = (unsigned char*)(viewportTarget->rawData(rowPitch, slicePitch));
+        
+        std::vector<unsigned char> current_image;
+        unsigned char* val = NULL;
+        int total_len = 0;
+        for (unsigned int i = 0; i < targetDesc.height(); i++)
+        {
+            val = (pixelData + (i * rowPitch));
+            for (unsigned int j = 0; j < targetDesc.width(); j++) {
+                total_len++;
+                val++;
+            }
+        }
+
+        */
+        
+        // Cleanup the pixel data, and release our render target.
+        //viewportTarget->freeRawData(pixelData);
+        
+        
+
+        // Release the target else errors!
     }
+    //}
 
-    MayaViewportRenderData
-
+    displayInfo("Render finished");
 
 
 }
@@ -195,56 +284,25 @@ void advancedPlayblastCmd::renderFile() {
     vFrameRange = mFrameRange ? vFrameRange : Vector2(MAnimControl::minTime(), MAnimControl::maxTime());
 
     
-    const MHWRender::MRenderTargetManager* targetManager = fRenderer->getRenderTargetManager();
-    MHWRender::MTextureManager* textureManager = fRenderer->getTextureManager();
-
-    MHWRender::MRenderTargetDescription targetDesc = MHWRender::MRenderTargetDescription();
     
-    for (double ii = vFrameRange.x; ii <= vFrameRange.y; ii++) {
+    for (double startFrame = vFrameRange.x; startFrame <= vFrameRange.y; startFrame++) {
         viewer.refresh();
-        MAnimControl::setCurrentTime(MTime(ii));
+        MTime currentFrame = MTime(startFrame);
+
+
+
+
+
+        //MayaViewportRenderData* newRenderTask = new MayaViewportRenderData(currentFrame, false);
+        //gRenderData.push_back(newRenderTask);
+        //MGlobal::execute
+        //MGlobal::executeTaskOnIdle(MayaViewportRenderData::doRenderTask, newRenderTask, MGlobal::kHighIdlePriority);
+        //MAnimControl::setCurrentTime(currentFrame);
         
-        std::stringstream output_file;
-        output_file << outputDir << "/" << boost::str(output_fmt % ii)  << ".png";
+        //std::stringstream output_file;
+        //output_file << outputDir << "/" << boost::str(output_fmt % ii)  << ".png";
        
-        MGlobal::displayInfo("1");
-        MHWRender::MRenderTarget& renderTarget = *targetManager->acquireRenderTarget(targetDesc);
-        MGlobal::displayInfo("2");
-        // Get the render target data (the screen pixels)
-        int rowPitch = 0;
-        size_t slicePitch = 0;
-        MGlobal::displayInfo(renderTarget.className());
-        renderTarget.rawData(rowPitch, slicePitch);
-        MGlobal::displayInfo("3");
-        //targetManager->releaseRenderTarget(renderTarget);
-        MGlobal::displayInfo("4");
 
-        /*
-
-        MHWRender::MTexture* texture = NULL;
-        if (targetData != NULL) {
-            MHWRender::MTextureDescription textureDesc;
-            textureDesc.fWidth = targetDesc.width();
-            textureDesc.fHeight = targetDesc.height();
-            textureDesc.fDepth = 1;
-            textureDesc.fBytesPerRow = rowPitch;
-            textureDesc.fBytesPerSlice = slicePitch;
-            textureDesc.fMipmaps = 1;
-            textureDesc.fArraySlices = targetDesc.arraySliceCount();
-            textureDesc.fFormat = targetDesc.rasterFormat();
-            textureDesc.fTextureType = MHWRender::kImage2D;
-            textureDesc.fEnvMapType = MHWRender::kEnvNone;
-
-            texture = textureManager->acquireTexture("textureTest", textureDesc, targetData);
-        }
-
-        MImage img = MImage();
-        texture->update(img, false);
-        //img.create(viewer.portWidth(), viewer.portHeight(), 4);
-
-        */
-
-        MGlobal::displayInfo(output_file.str().c_str());
         //MGlobal::displayInfo(boost::str(ctime_fmt % ii).c_str());
     }
 
